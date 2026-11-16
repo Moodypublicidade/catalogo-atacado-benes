@@ -192,6 +192,7 @@
   .who input{accent-color:#000;margin:2px 0 0;width:16px;height:16px;flex:none}
   .who label.on{border-color:#000;outline:1px solid #000;background:var(--gray)}
   .who.err label{border-color:var(--danger)}
+  .who label.teste{grid-column:1/-1;border-style:dashed}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .field label{display:block;font-size:12px;font-weight:500;margin-bottom:4px}
   .field input,.field textarea{width:100%;border:1px solid #9a9a9a;background:#fff;padding:10px 12px;font-size:14px;outline:none;border-radius:0}
@@ -361,6 +362,7 @@ const CONFIG = {
   consultoras: [
     { nome: 'Camila', whatsapp: '5511971073954' },
     { nome: 'Thais',  whatsapp: '5511939329911' },
+    { nome: 'TESTE',  whatsapp: '5519971648803', teste: true },
   ],
   minimoPecas: 0,                     // pedido mínimo em peças (0 = sem mínimo)
 };
@@ -598,13 +600,13 @@ function renderDrawer(){
       </div>
       <div class="msg" id="whoMsg">Selecione se você já é cliente ou se é novo comprador.</div>
       <h3>Atendido por: *</h3>
-      <div class="who" id="cons">${CONFIG.consultoras.map(c=>`<label class="${form.consultora===c.nome?'on':''}"><input type="radio" name="consultora" value="${esc(c.nome)}" ${form.consultora===c.nome?'checked':''}><span><b>Atendido por ${esc(c.nome)}</b><small>Consultora Benes Tricot</small></span></label>`).join('')}</div>
+      <div class="who" id="cons">${CONFIG.consultoras.map(c=>`<label class="${form.consultora===c.nome?'on':''} ${c.teste?'teste':''}"><input type="radio" name="consultora" value="${esc(c.nome)}" ${form.consultora===c.nome?'checked':''}><span><b>Atendido por ${esc(c.nome)}</b><small>${c.teste?'Envia o pedido para o número de teste':'Consultora Benes Tricot'}</small></span></label>`).join('')}</div>
       <div class="msg" id="consMsg">Selecione a consultora que vai atender você.</div>
       <h3>Seus dados</h3>
       <div class="field" data-f="nome"><label>Seu nome *</label><input name="nome" autocomplete="name" value="${esc(form.nome)}"><div class="msg">Informe seu nome para a consultora te identificar.</div></div>
       <div class="row2">
         <div class="field" data-f="loja"><label>Nome da loja *</label><input name="loja" autocomplete="organization" value="${esc(form.loja)}"><div class="msg">Informe o nome da loja.</div></div>
-        <div class="field" data-f="doc"><label>CNPJ ou CPF *</label><input name="doc" inputmode="numeric" placeholder="Só números" value="${esc(form.doc)}"><div class="msg">Informe um CPF (11 dígitos) ou CNPJ (14 dígitos).</div></div>
+        <div class="field" data-f="doc"><label>CNPJ *</label><input name="doc" inputmode="numeric" placeholder="Só números (14 dígitos)" value="${esc(form.doc)}"><div class="msg">Informe o CNPJ (14 dígitos).</div></div>
       </div>
       <div class="field" data-f="cidade"><label>Cidade / UF *</label><input name="cidade" placeholder="Ex.: São Paulo / SP" value="${esc(form.cidade)}"><div class="msg">Informe a cidade e o estado.</div></div>
       <div class="field"><label>Observações</label><textarea name="obs" rows="2" placeholder="Ex.: prazo, forma de pagamento, frete…">${esc(form.obs)}</textarea></div>
@@ -632,7 +634,7 @@ function message(i){
   L.push(`*Tipo:* ${form.tipo==='cliente'?'Já sou cliente':form.tipo==='novo'?'Novo comprador':'-'}`);
   L.push(`*Cliente:* ${form.nome||'-'}`);
   if(form.loja) L.push(`*Loja:* ${form.loja}`);
-  if(form.doc) L.push(`*CNPJ/CPF:* ${form.doc}`);
+  if(form.doc) L.push(`*CNPJ:* ${form.doc}`);
   if(form.cidade) L.push(`*Cidade/UF:* ${form.cidade}`);
   L.push('','*ITENS*');
   groups().forEach(g=>{
@@ -649,7 +651,7 @@ function message(i){
 const CHECK = {
   nome: v => (v||'').trim().length>=2,
   loja: v => (v||'').trim().length>=2,
-  doc: v => [11,14].includes((v||'').replace(/\D/g,'').length),
+  doc: v => (v||'').replace(/\D/g,'').length===14,
   cidade: v => (v||'').trim().length>=2,
 };
 function renderFootNote(){ const n=document.querySelector('#dfoot .note:last-child'); if(n) n.textContent=`Você será direcionado para o WhatsApp da consultora ${CONFIG.consultoras[conIdx()]?.nome||''} com o pedido pronto. Pagamento, frete e disponibilidade são confirmados com ela.`; }
