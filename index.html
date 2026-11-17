@@ -448,7 +448,7 @@ function enviarPedido(i){
   enviando = true;
   const t = totals();
   const itens = [];
-  groups().forEach(g=>g.p.tam.forEach(s=>{ if(g.sizes[s]) itens.push({produto:g.p.nome, cor:g.cor, tam:s, qtd:g.sizes[s], ref:g.v.cod||g.p.id}); }));
+  groups().forEach(g=>g.p.tam.forEach(s=>{ if(g.sizes[s]) itens.push({produto:g.p.nome, cor:g.cor, tam:s, qtd:g.sizes[s], ref:g.v.cod||g.p.id, preco:g.v.por}); }));
   const d = {pedido: Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7), consultora: CONFIG.consultoras[i]?.nome||'',
     tipo: form.tipo, nome: form.nome, loja: form.loja, cnpj: form.doc, cidade: form.cidade, obs: form.obs, total: Math.round(t.por*100)/100, itens};
   try{ fetch(CONFIG.estoqueUrl, {method:'POST', mode:'no-cors', keepalive:true, headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(d)}); }catch(e){}
